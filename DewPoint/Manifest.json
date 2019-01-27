@@ -4,7 +4,7 @@
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.0.11",
+  "Version": "0.0.12",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "",
@@ -20,8 +20,8 @@
       "Category": "Node",
       "DefaultIcon": "icons/DewPoint.png",
       "HelpTooltip": {
-        "en": "Calculates dew point by temperature and rel. humidity.",
-        "de": "Berechnet den Taupunkt anhand von Temperatur und rel. Luftfeuchte."
+        "en": "Calculates dew point by temperature and rel. humidity. Icon provided by https://icons8.com/.",
+        "de": "Berechnet den Taupunkt anhand von Temperatur und rel. Luftfeuchte. Icon zur Verfügung gestellt von https://icons8.com/."
       },
       "HelpFileReference": null
     }
