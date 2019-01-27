@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("CommonNodes")]
+[assembly: AssemblyTitle("DewPoint")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CommonNodes")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCompany("Alram Lechner")]
+[assembly: AssemblyProduct("DewPoint")]
+[assembly: AssemblyCopyright("Copyright ©  2019 Alram Lechner")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

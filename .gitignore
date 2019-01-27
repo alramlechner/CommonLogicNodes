@@ -7,3 +7,6 @@
 /Zip
 /packages
 /*.sln
+/.vs
+/DewPoint/bin
+/DewPoint/obj

@@ -1,10 +1,10 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "CommonNodes.dll",
+  "Assembly": "DewPoint.dll",
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.0.7",
+  "Version": "0.0.11",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "",
@@ -13,8 +13,8 @@
     {
       "Type": "Name.Lechners.GiraSdk.Common.DewPointNode",
       "Name": {
-		"en": "Calculate dew point",
-        "de": "Taupunkt berechnen"
+        "en": "Dew point calculator",
+        "de": "Taupunktrechner"
       },
       "IsConverter": false,
       "Category": "Node",
