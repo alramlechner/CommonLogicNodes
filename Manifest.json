@@ -1,0 +1,29 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "CommonNodes.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll"
+  ],
+  "Version": "0.0.7",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "",
+  "PackageId": "0E32B935-660A-4519-8D02-BC6666A31504",
+  "Nodes": [
+    {
+      "Type": "Name.Lechners.GiraSdk.Common.DewPointNode",
+      "Name": {
+		"en": "Calculate dew point",
+        "de": "Taupunkt berechnen"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/DewPoint.png",
+      "HelpTooltip": {
+        "en": "Calculates dew point by temperature and rel. humidity.",
+        "de": "Berechnet den Taupunkt anhand von Temperatur und rel. Luftfeuchte."
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
