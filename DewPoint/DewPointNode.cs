@@ -50,12 +50,19 @@ namespace Name.Lechners.GiraSdk.Common
                 DewPoint.BlockGraph();
                 return;
             }
+            DewPoint.Value = CalculateDewPoint(Temperature.Value, Humidity.Value);
+        }
 
-            double temp = Temperature.Value;
-            double rel = Humidity.Value;
-
+        /// <summary>
+        /// TODO: good candiate for unit tests ...
+        /// </summary>
+        /// <param name="temperature">temperature (°C)</param>
+        /// <param name="humidity">rel .humidity (%)</param>
+        /// <returns>dew point (°C)</returns>
+        public double CalculateDewPoint(double temperature, double humidity)
+        {
             double a, b;
-            if (temp >= 0)
+            if (temperature >= 0)
             {
                 a = 7.5;
                 b = 237.3;
@@ -65,10 +72,10 @@ namespace Name.Lechners.GiraSdk.Common
                 a = 7.6;
                 b = 240.7;
             }
-            double sdd = 6.1078 * Math.Pow(10, (a * temp) / (b + temp));
-            double dd = rel / 100 * sdd;
-            double taupunkt = b * Math.Log10(dd / 6.1078) / (a - Math.Log10(dd / 6.1078));
-            DewPoint.Value = Math.Round(taupunkt, 2);
+            double sdd = 6.1078 * Math.Pow(10, (a * temperature) / (b + temperature));
+            double dd = humidity / 100 * sdd;
+            double dewPoint = b * Math.Log10(dd / 6.1078) / (a - Math.Log10(dd / 6.1078));
+            return Math.Round(dewPoint, 2);
         }
 
         public override ValidationResult Validate(string language)
