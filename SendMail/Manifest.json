@@ -1,0 +1,33 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "Mail.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll",
+	"BouncyCastle.Crypto.dll",
+	"Mail.dll",
+	"MailKit.dll",
+	"MimeKit.dll"
+  ],
+  "Version": "0.0.1",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "",
+  "PackageId": "0E32B935-660A-4519-8D02-BC6666A31504",
+  "Nodes": [
+    {
+      "Type": "Name.Lechners.GiraSdk.Mail.SendMail",
+      "Name": {
+        "en": "Send e-mail",
+        "de": "eMail senden"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/SendMail.png",
+      "HelpTooltip": {
+        "en": "Send an e-mail via SMTP. Icon provided by https://icons8.com/.",
+        "de": "Sendet ein eMail über das SMTP Protokoll. Icon zur Verfügung gestellt von https://icons8.com/."
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
