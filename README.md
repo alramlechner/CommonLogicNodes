@@ -15,7 +15,7 @@ Todo:
 - increase test coverage
 
 ### SendMail
-Sends mail via SMTP. No SSL/TLS support for now.
+Sends mail via SMTP. Depends on .net framework 4.5 (should be available on X1) but it is broken on X1.
 
 Status: in development
 
