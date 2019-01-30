@@ -8,7 +8,9 @@ Short description of nodes. Including state (tested hardware, test coverage, etc
 Dew point calculator.
 
 Tested environment: GPA, X1
+
 Dev: Alram Lechner
+
 Todo:
 - increase test coverage
 
@@ -16,8 +18,11 @@ Todo:
 Sends mail via SMTP. No SSL/TLS support for now.
 
 Status: in development
+
 Tested environment: GPA
+
 Dev: Alram Lechner
+
 Todo:
 - make it work on X1 (currently it does not)
 - add feature params for subject, mailtext
