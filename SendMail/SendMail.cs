@@ -29,6 +29,9 @@ namespace Name.Lechners.GiraSdk.Mail
         [Parameter(DisplayOrder = 5, InitOrder = 1, IsDefaultShown = false)]
         public IntValueObject SmtpPort { get; private set; }
 
+        [Output(DisplayOrder = 1)]
+        public StringValueObject ErrorMessage { get; private set; }
+
         public SendMail(INodeContext context) : base(context)
         {
             context.ThrowIfNull("context");
@@ -38,6 +41,7 @@ namespace Name.Lechners.GiraSdk.Mail
             this.From = typeService.CreateString(PortTypes.String, "Senderadresse");
             this.SmtpHost = typeService.CreateString(PortTypes.String, "SMTP Server");
             this.SmtpPort = typeService.CreateInt(PortTypes.Integer, "SMTP Port");
+            this.ErrorMessage = typeService.CreateString(PortTypes.String, "Fehlertext");
         }
 
         public override void Startup()
@@ -53,8 +57,15 @@ namespace Name.Lechners.GiraSdk.Mail
             }
 
             // TODO: schedule as async task ...
-            SendMessage();
-
+            try
+            {
+                SendMessage();
+                this.ErrorMessage.Value = "";
+            }
+            catch (Exception e)
+            {
+                this.ErrorMessage.Value = e.ToString();
+            }
         }
 
         public void SendMessage()
@@ -76,8 +87,8 @@ Erste Mail vom X1!
             {
                 // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-                client.Connect(SmtpHost.Value, SmtpPort.Value, false);
+                
+                client.Connect(SmtpHost.Value, SmtpPort.Value, MailKit.Security.SecureSocketOptions.None);
 
                 // Note: only needed if the SMTP server requires authentication
                 // client.Authenticate("joey", "password");
