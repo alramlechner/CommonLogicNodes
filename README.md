@@ -28,7 +28,5 @@ Dev: Alram Lechner
 
 Todo:
 - add feature params for subject, mailtext
-- add feature ssl/tls support
-- add feature authentication
 - increase test coverage
 
