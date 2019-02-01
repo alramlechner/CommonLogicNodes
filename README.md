@@ -16,6 +16,9 @@ Todo:
 
 ### SendMail
 Sends mail via SMTP.
+Known to work with:
+- Synology DSM 6.x, no encryption, no authentication
+- GMX, encryption=STARTTLS (port 587), user+password authentication
 
 Status: in development
 
