@@ -12,6 +12,14 @@ using System.Threading.Tasks;
 namespace Name.Lechners.GiraSdk.Mail
 {
 
+    static class EncryptionTypes
+    {
+        public const string NONE = "Unverschlüsselt";
+        public const string SSL = "SSL";
+        public const string STARTTLS = "STARTTLS";
+        public static string[] VALUES = new[] { NONE,SSL,STARTTLS };
+    }
+
     public class SendMail : LogicNodeBase
     {
         [Input(DisplayOrder = 1, IsInput = true, IsRequired = true)]
@@ -29,6 +37,15 @@ namespace Name.Lechners.GiraSdk.Mail
         [Parameter(DisplayOrder = 5, InitOrder = 1, IsDefaultShown = false)]
         public IntValueObject SmtpPort { get; private set; }
 
+        [Parameter(DisplayOrder = 6, InitOrder = 1, IsDefaultShown = false)]
+        public EnumValueObject Encryption { get; private set; }
+
+        [Parameter(DisplayOrder = 7, InitOrder = 1, IsDefaultShown = false)]
+        public StringValueObject SmtpUser { get; private set; }
+
+        [Parameter(DisplayOrder = 8, InitOrder = 1, IsDefaultShown = false)]
+        public StringValueObject SmtpPassword { get; private set; }
+
         [Output(DisplayOrder = 1)]
         public StringValueObject ErrorMessage { get; private set; }
 
@@ -42,6 +59,9 @@ namespace Name.Lechners.GiraSdk.Mail
             this.SmtpHost = typeService.CreateString(PortTypes.String, "SMTP Server");
             this.SmtpPort = typeService.CreateInt(PortTypes.Integer, "SMTP Port");
             this.ErrorMessage = typeService.CreateString(PortTypes.String, "Fehlertext");
+            this.Encryption = typeService.CreateEnum("SmtpEncryption", "Verschlüsselung", EncryptionTypes.VALUES);
+            this.SmtpUser = typeService.CreateString(PortTypes.String, "SMTP Benutzer");
+            this.SmtpPassword = typeService.CreateString(PortTypes.String, "SMTP Kennwort");
         }
 
         public override void Startup()
@@ -51,7 +71,8 @@ namespace Name.Lechners.GiraSdk.Mail
 
         public override void Execute()
         {
-            if (!SendTrigger.HasValue || !SendTrigger.WasSet || !To.HasValue || !From.HasValue || !SmtpHost.HasValue || !SmtpPort.HasValue)
+            if (!SendTrigger.HasValue || !SendTrigger.WasSet || !To.HasValue || !From.HasValue || !SmtpHost.HasValue || !SmtpPort.HasValue
+                || !Encryption.HasValue)
             {
                 return;
             }
@@ -87,11 +108,30 @@ Erste Mail vom X1!
             {
                 // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                
-                client.Connect(SmtpHost.Value, SmtpPort.Value, MailKit.Security.SecureSocketOptions.None);
+                MailKit.Security.SecureSocketOptions socketOptions;
+                switch (Encryption.Value)
+                {
+                    case EncryptionTypes.SSL:
+                        socketOptions = MailKit.Security.SecureSocketOptions.SslOnConnect;
+                        break;
+                    case EncryptionTypes.STARTTLS:
+                        socketOptions = MailKit.Security.SecureSocketOptions.StartTls;
+                        break;
+                    case EncryptionTypes.NONE:
+                        socketOptions = MailKit.Security.SecureSocketOptions.None;
+                        break;
+                    default:
+                        socketOptions = MailKit.Security.SecureSocketOptions.Auto;
+                        break;
+                }
+
+                client.Connect(SmtpHost.Value, SmtpPort.Value, socketOptions);
 
                 // Note: only needed if the SMTP server requires authentication
-                // client.Authenticate("joey", "password");
+                if (SmtpUser.HasValue && SmtpPassword.HasValue && SmtpUser.Value.Length >= 1 && SmtpPassword.Value.Length >= 1)
+                {
+                    client.Authenticate(SmtpUser.Value, SmtpPassword.Value);
+                }
 
                 client.Send(message);
                 client.Disconnect(true);
