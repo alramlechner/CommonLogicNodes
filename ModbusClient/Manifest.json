@@ -1,0 +1,30 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "ModbusClient.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll",
+	"EasyModbus.dll"
+  ],
+  "Version": "0.0.2",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "",
+  "PackageId": "764BD112-8C3C-484B-95F0-31B4FD84193D",
+  "Nodes": [
+    {
+      "Type": "Name.Lechners.GiraSdk.Modbus.ModbusClientNode",
+      "Name": {
+        "en": "QueryModbus TCP",
+        "de": "Modbus TCP"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/GenericLogicNode.png",
+      "HelpTooltip": {
+        "en": "Query values from modbus tcp server.",
+        "de": "Fragt Werte von einem Modbus TCP server ab."
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
