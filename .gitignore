@@ -12,3 +12,5 @@
 /SendMail/bin
 /SendMail/obj
 /Zip
+/ModbusClient/bin
+/ModbusClient/obj
