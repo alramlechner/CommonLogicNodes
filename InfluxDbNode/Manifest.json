@@ -1,0 +1,29 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "InfluxDbNode.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll"
+  ],
+  "Version": "0.0.9",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "",
+  "PackageId": "C2EC41A1-B27C-4D49-BFBF-5CEE4A7BE255",
+  "Nodes": [
+    {
+      "Type": "Name.Lechners.GiraSdk.InfluxDbNode.Write",
+      "Name": {
+        "en": "Write data to InfluxDb",
+        "de": "InfluxDB Daten schreiben"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/Influxdb.png",
+      "HelpTooltip": {
+        "en": "Write data to InfluxDb measurement via REST API.",
+        "de": "Schreibt InfluxDB measurement Daten via REST API."
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
