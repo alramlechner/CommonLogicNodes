@@ -41,3 +41,16 @@ Dev: Alram Lechner
 Todo:
 - increase test coverage
 - add support for further commands
+
+### InfluxDbNode
+Influx DB node to store data in InfluxDB (write datapoint).
+
+Status: POC/in development
+
+Dev: Alram Lechner
+
+Todo (a lot of things):
+- add auth
+- test encodings
+- refactor fields to be dynamic list
+- implement better logic to write many value as single datapoint
