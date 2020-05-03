@@ -1,17 +1,21 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "InfluxDbNode.dll",
+  "Assembly": "alram_lechner_gmx_at.logic.InfluxDb.dll",
+  "PackageName": {
+    "en": "InfluxDB Nodes"
+  },
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.0.9",
+  "Version": "0.0.14",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
-  "DeveloperId": "",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
   "PackageId": "C2EC41A1-B27C-4D49-BFBF-5CEE4A7BE255",
   "Nodes": [
     {
-      "Type": "Name.Lechners.GiraSdk.InfluxDbNode.Write",
+      "Type": "alram_lechner_gmx_at.logic.InfluxDb.WriteNode",
       "Name": {
         "en": "Write data to InfluxDb",
         "de": "InfluxDB Daten schreiben"

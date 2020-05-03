@@ -7,8 +7,8 @@
     <ProjectGuid>{33B04EE6-7687-4E34-9C27-F6E8F5B48E49}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Name.Lechners.GiraSdk.Common</RootNamespace>
-    <AssemblyName>DewPoint</AssemblyName>
+    <RootNamespace>alram_lechner_gmx_at.logic.DewPoint</RootNamespace>
+    <AssemblyName>alram_lechner_gmx_at.logic.DewPoint</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

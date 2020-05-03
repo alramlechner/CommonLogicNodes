@@ -7,8 +7,8 @@
     <ProjectGuid>{2A9EC00A-3396-4DF6-881E-286C50AB863E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Name.Lechners.GiraSdk.Modbus</RootNamespace>
-    <AssemblyName>ModbusClient</AssemblyName>
+    <RootNamespace>alram_lechner_gmx_at.logic.Modbus</RootNamespace>
+    <AssemblyName>alram_lechner_gmx_at.logic.Modbus</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

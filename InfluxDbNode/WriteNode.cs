@@ -9,10 +9,10 @@ using LogicModule.Nodes.Helpers;
 using LogicModule.ObjectModel;
 using LogicModule.ObjectModel.TypeSystem;
 
-namespace Name.Lechners.GiraSdk.InfluxDbNode
+namespace alram_lechner_gmx_at.logic.InfluxDb
 {
 
-    public class Write : LogicNodeBase
+    public class WriteNode : LogicNodeBase
     {
         [Parameter(DisplayOrder = 1, IsRequired = true, IsDefaultShown = false)]
         public StringValueObject InfluxDbHost { get; private set; }
@@ -48,7 +48,7 @@ namespace Name.Lechners.GiraSdk.InfluxDbNode
         [Output(DisplayOrder = 2, IsRequired = false, IsDefaultShown = false)]
         public StringValueObject ErrorMessage { get; private set; }
 
-        public Write(INodeContext context) : base(context)
+        public WriteNode(INodeContext context) : base(context)
         {
             context.ThrowIfNull("context");
             ITypeService typeService = context.GetService<ITypeService>();
