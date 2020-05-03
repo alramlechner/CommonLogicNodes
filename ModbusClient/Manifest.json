@@ -1,18 +1,19 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "ModbusClient.dll",
+  "Assembly": "alram_lechner_gmx_at.logic.Modbus.dll",
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll",
 	"EasyModbus.dll"
   ],
-  "Version": "0.0.2",
+  "Version": "0.0.3",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
-  "DeveloperId": "",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
   "PackageId": "764BD112-8C3C-484B-95F0-31B4FD84193D",
   "Nodes": [
     {
-      "Type": "Name.Lechners.GiraSdk.Modbus.ModbusClientNode",
+      "Type": "alram_lechner_gmx_at.logic.Modbus.ModbusClientNode",
       "Name": {
         "en": "QueryModbus TCP",
         "de": "Modbus TCP"

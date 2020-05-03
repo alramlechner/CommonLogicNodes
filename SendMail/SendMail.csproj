@@ -7,8 +7,8 @@
     <ProjectGuid>{DF8DD7D6-E549-4F2F-9BE8-3C711F476170}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Name.Lechners.GiraSdk.Mail</RootNamespace>
-    <AssemblyName>Mail</AssemblyName>
+    <RootNamespace>alram_lechner_gmx_at.logic.Mail</RootNamespace>
+    <AssemblyName>alram_lechner_gmx_at.logic.Mail</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

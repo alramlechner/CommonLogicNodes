@@ -1,6 +1,6 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "Mail.dll",
+  "Assembly": "alram_lechner_gmx_at.logic.Mail.dll",
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll",
 	"BouncyCastle.Crypto.dll",
@@ -8,14 +8,15 @@
 	"MailKit.dll",
 	"MimeKit.dll"
   ],
-  "Version": "0.0.9",
+  "Version": "0.0.10",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
-  "DeveloperId": "",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
   "PackageId": "0E32B935-660A-4519-8D02-BC6666A31504",
   "Nodes": [
     {
-      "Type": "Name.Lechners.GiraSdk.Mail.SendMail",
+      "Type": "alram_lechner_gmx_at.logic.Mail.SendMail",
       "Name": {
         "en": "Send e-mail",
         "de": "eMail senden"

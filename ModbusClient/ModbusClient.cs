@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Name.Lechners.GiraSdk.Modbus
+namespace alram_lechner_gmx_at.logic.Modbus
 {
 
     public class ModbusClientNode : LogicNodeBase

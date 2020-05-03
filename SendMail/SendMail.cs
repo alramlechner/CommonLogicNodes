@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Name.Lechners.GiraSdk.Mail
+namespace alram_lechner_gmx_at.logic.Mail
 {
 
     static class EncryptionTypes

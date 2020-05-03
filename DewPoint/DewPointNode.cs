@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Name.Lechners.GiraSdk.Common
+namespace alram_lechner_gmx_at.logic.DewPoint
 {
     public class DewPointNode : LogicNodeBase
     {

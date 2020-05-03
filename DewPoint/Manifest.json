@@ -1,17 +1,18 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "DewPoint.dll",
+  "Assembly": "alram_lechner_gmx_at.logic.DewPoint.dll",
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.0.14",
+  "Version": "0.0.15",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
-  "DeveloperId": "",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
   "PackageId": "0E32B935-660A-4519-8D02-BC6666A31504",
   "Nodes": [
     {
-      "Type": "Name.Lechners.GiraSdk.Common.DewPointNode",
+      "Type": "alram_lechner_gmx_at.logic.DewPoint.DewPointNode",
       "Name": {
         "en": "Dew point calculator",
         "de": "Taupunktrechner"
