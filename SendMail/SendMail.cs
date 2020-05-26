@@ -40,11 +40,17 @@ namespace alram_lechner_gmx_at.logic.Mail
         [Parameter(DisplayOrder = 6, InitOrder = 1, IsDefaultShown = false)]
         public EnumValueObject Encryption { get; private set; }
 
-        [Parameter(DisplayOrder = 7, InitOrder = 1, IsDefaultShown = false)]
+        [Parameter(DisplayOrder = 7, InitOrder = 1, IsDefaultShown = false, IsRequired = false)]
         public StringValueObject SmtpUser { get; private set; }
 
-        [Parameter(DisplayOrder = 8, InitOrder = 1, IsDefaultShown = false)]
+        [Parameter(DisplayOrder = 8, InitOrder = 1, IsDefaultShown = false, IsRequired = false)]
         public StringValueObject SmtpPassword { get; private set; }
+
+        [Parameter(DisplayOrder = 9, InitOrder = 1, IsDefaultShown = false)]
+        public StringValueObject Subject { get; private set; }
+        
+        [Parameter(DisplayOrder = 10, InitOrder = 1, IsDefaultShown = false)]
+        public StringValueObject MailBody { get; private set; }
 
         [Output(DisplayOrder = 1)]
         public StringValueObject ErrorMessage { get; private set; }
@@ -62,6 +68,8 @@ namespace alram_lechner_gmx_at.logic.Mail
             this.Encryption = typeService.CreateEnum("SmtpEncryption", "Verschlüsselung", EncryptionTypes.VALUES);
             this.SmtpUser = typeService.CreateString(PortTypes.String, "SMTP Benutzer");
             this.SmtpPassword = typeService.CreateString(PortTypes.String, "SMTP Kennwort");
+            this.Subject = typeService.CreateString(PortTypes.String, "Betreff");
+            this.MailBody = typeService.CreateString(PortTypes.String, "Mailtext");
         }
 
         public override void Startup()
@@ -94,15 +102,27 @@ namespace alram_lechner_gmx_at.logic.Mail
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(From.Value));
             message.To.Add(new MailboxAddress(To.Value));
-            message.Subject = "X1 Mail ...";
-
-            message.Body = new TextPart("plain")
+            if (Subject.HasValue)
             {
-                Text = @"Hi,
+                message.Subject = Subject.Value;
+            } else
+            {
+                message.Subject = Subject.Value;
+            }
 
-Erste Mail vom X1!
-"
-            };
+            if (MailBody.HasValue)
+            {
+                message.Body = new TextPart("plain")
+                {
+                    Text = MailBody.Value
+                };
+            } else
+            {
+                message.Body = new TextPart("plain")
+                {
+                    Text = ""
+                };
+            }
 
             using (var client = new SmtpClient())
             {

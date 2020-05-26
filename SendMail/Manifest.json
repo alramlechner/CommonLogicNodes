@@ -8,7 +8,7 @@
 	"MailKit.dll",
 	"MimeKit.dll"
   ],
-  "Version": "0.0.10",
+  "Version": "0.0.15",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "alram_lechner_gmx_at",
