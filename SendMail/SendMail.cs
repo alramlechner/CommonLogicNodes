@@ -46,10 +46,10 @@ namespace alram_lechner_gmx_at.logic.Mail
         [Parameter(DisplayOrder = 8, InitOrder = 1, IsDefaultShown = false, IsRequired = false)]
         public StringValueObject SmtpPassword { get; private set; }
 
-        [Parameter(DisplayOrder = 9, InitOrder = 1, IsDefaultShown = false)]
+        [Input(DisplayOrder = 9, InitOrder = 1, IsDefaultShown = false)]
         public StringValueObject Subject { get; private set; }
         
-        [Parameter(DisplayOrder = 10, InitOrder = 1, IsDefaultShown = false)]
+        [Input(DisplayOrder = 10, InitOrder = 1, IsDefaultShown = false)]
         public StringValueObject MailBody { get; private set; }
 
         [Output(DisplayOrder = 1)]
