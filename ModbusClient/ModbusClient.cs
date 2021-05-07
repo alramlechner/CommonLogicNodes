@@ -10,6 +10,13 @@ using System.Text;
 namespace alram_lechner_gmx_at.logic.Modbus
 {
 
+    static class FunctionCodeEnum
+    {
+        public const string FC_03 = "Read Holding Registers (03)";
+        public const string FC_04 = "Read Input Registers (04)";
+        public static string[] VALUES = new[] { FC_03, FC_04 };
+    }
+
     public class ModbusClientNode : LogicNodeBase
     {
 
@@ -29,6 +36,9 @@ namespace alram_lechner_gmx_at.logic.Modbus
         [Parameter(DisplayOrder = 6, InitOrder = 6, IsDefaultShown = false)]
         public IntValueObject ReadCount1 { get; private set; }
 
+        [Parameter(DisplayOrder = 7, InitOrder = 7, IsDefaultShown = false)]
+        public EnumValueObject FunctionCode { get; private set; }
+
         [Output]
         public DoubleValueObject OutputValue1 { get; private set; }
         [Output]
@@ -41,18 +51,22 @@ namespace alram_lechner_gmx_at.logic.Modbus
             context.ThrowIfNull("context");
             ITypeService typeService = context.GetService<ITypeService>();
 
-            this.TimeSpan = typeService.CreateInt(PortTypes.Integer, "Restart (Sek.)", 60);
-            this.ModbusHost = typeService.CreateString(PortTypes.String, "Modbus TCP Server");
+            this.TimeSpan = typeService.CreateInt(PortTypes.Integer, "Abfrageinterval", 60);
+            this.ModbusHost = typeService.CreateString(PortTypes.String, "Modbus TCP Host");
             this.ModbusPort = typeService.CreateInt(PortTypes.Integer, "Port", 502);
-            this.ModbusID = typeService.CreateInt(PortTypes.Integer, "Modbus ID", 3);
+            this.ModbusID = typeService.CreateInt(PortTypes.Integer, "Geräte ID", 1);
+            this.ModbusID.MinValue = 1;
+            this.ModbusID.MaxValue = 256;
 
             // --------------------------------------------------------------------------------------- //
-            this.ModbusAddress1 = typeService.CreateInt(PortTypes.Integer, "Modbus Addresse", 0);
-            this.ModbusAddress1.MinValue = 0;
+            this.ModbusAddress1 = typeService.CreateInt(PortTypes.Integer, "Register Addresse", 1);
+            this.ModbusAddress1.MinValue = 1;
             this.ModbusAddress1.MaxValue = 65535;
-            this.ReadCount1 = typeService.CreateInt(PortTypes.Integer, "Anzahl words", 2);
+            this.ReadCount1 = typeService.CreateInt(PortTypes.Integer, "Anzahl Register", 1);
             this.ReadCount1.MinValue = 1;
-            this.ReadCount1.MaxValue = 2;
+            // this.ReadCount1.MaxValue = 2;
+
+            this.FunctionCode = typeService.CreateEnum("ModbusFunction", "Funktion", FunctionCodeEnum.VALUES, FunctionCodeEnum.FC_03);
 
             this.OutputValue1 = typeService.CreateDouble(PortTypes.Number, "Register Wert");
 
@@ -80,18 +94,21 @@ namespace alram_lechner_gmx_at.logic.Modbus
                     modbusClient.Connect();
                     modbusClient.UnitIdentifier = (byte)ModbusID.Value;
 
-                    // Register 1
-                    // read + 1 register ???!!! bug in the EasyModbus ????!!! lowest byte 0x00 !!!
-                    // [0] Hugh Byte
-                    // [1] Low Byte
-                    // [2] Dummy (High Byte)
-                    // [3] Dummy (Low Byte) = 0x00 in X1 (not in the X1 SImulation!)
-                    int[] readHoldingRegisters = modbusClient.ReadHoldingRegisters(ModbusAddress1.Value, ReadCount1.Value + 2);
+                    int[] readHoldingRegisters;
+                    switch (FunctionCode.Value)
+                    {
+                        case FunctionCodeEnum.FC_04:
+                            readHoldingRegisters = modbusClient.ReadInputRegisters(ModbusAddress1.Value, ReadCount1.Value);
+                            break;
+                        case FunctionCodeEnum.FC_03:
+                        default:
+                            readHoldingRegisters = modbusClient.ReadHoldingRegisters(ModbusAddress1.Value, ReadCount1.Value);
+                            break;
+                    }
 
                     double result = 0;
                     string result_str = "";
-                    //byte[] tmp;
-                    for (int i = 0; i < (readHoldingRegisters.Length - 2); i++)
+                    for (int i = 0; i < (readHoldingRegisters.Length); i++)
                     {
                         int tmp = readHoldingRegisters[i];
                         if (tmp == -32768) // fix for 0x00
@@ -99,12 +116,11 @@ namespace alram_lechner_gmx_at.logic.Modbus
                         if (tmp < 0) // no negative values !
                             tmp = tmp + (int)Math.Pow(2, 16);
 
-                        result = result + (tmp * Math.Pow(2, (16 * ((readHoldingRegisters.Length - 2) - (i + 1)))));
+                        result = result + (tmp * Math.Pow(2, (16 * ((readHoldingRegisters.Length) - (i + 1)))));
                         result_str = result_str + " 0x" + tmp.ToString("X4");
                     }
                     OutputValue1.Value = result;
                     ErrorMessage.Value = result_str;
-
                     this.SchedulerService.InvokeIn(new TimeSpan(0, 0, TimeSpan.Value), FetchFromModbusServer);
 
                 }
@@ -119,9 +135,7 @@ namespace alram_lechner_gmx_at.logic.Modbus
                     {
                         modbusClient.Disconnect();
                     }
-
                 }
-
             }
         }
     }
