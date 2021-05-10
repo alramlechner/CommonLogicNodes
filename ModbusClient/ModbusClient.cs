@@ -91,6 +91,7 @@ namespace alram_lechner_gmx_at.logic.Modbus
                 try
                 {
                     modbusClient = new ModbusClient(ModbusHost.Value, ModbusPort.Value);
+                    modbusClient.ConnectionTimeout = 5000;
                     modbusClient.Connect();
                     modbusClient.UnitIdentifier = (byte)ModbusID.Value;
 
