@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 
 namespace alram_lechner_gmx_at.logic.Modbus
-{
-    static class FunctionCodeEnum
+static class FunctionCodeEnum
     {
         public const string FC_03 = "Read Holding Registers (03)";
         public const string FC_04 = "Read Input Registers (04)";
-        public static string[] VALUES = new[] { FC_03, FC_04 };
+        public const string FC_06 = "Write single Register (06)";
+        public static string[] VALUES = new[] { FC_03, FC_04, FC_06 };
     }
     static class DataTypeEnum
     {
@@ -43,10 +43,16 @@ namespace alram_lechner_gmx_at.logic.Modbus
 
         [Parameter(DisplayOrder = 2, InitOrder = 2, IsDefaultShown = false)]
         public StringValueObject ModbusHost { get; private set; }
+
         [Parameter(DisplayOrder = 3, InitOrder = 3, IsDefaultShown = false)]
         public IntValueObject ModbusPort { get; private set; }
+
         [Parameter(DisplayOrder = 4, InitOrder = 4, IsDefaultShown = false)]
         public IntValueObject ModbusID { get; private set; }
+        [Input]
+        [Parameter(DisplayOrder = 10, InitOrder = 10, IsDefaultShown = false)]
+        public IntValueObject ModbusTX { get; private set; }
+
 
         // Modbus Register
         [Parameter(DisplayOrder = 5, InitOrder = 5, IsDefaultShown = false)]
@@ -97,6 +103,8 @@ namespace alram_lechner_gmx_at.logic.Modbus
 
             this.ErrorMessage = typeService.CreateString(PortTypes.String, "RAW / Error");
 
+            this.ModbusTX = typeService.CreateInt(PortTypes.Integer, "TX");
+
             SchedulerService = context.GetService<ISchedulerService>();
         }
         public override void Startup()
@@ -106,9 +114,25 @@ namespace alram_lechner_gmx_at.logic.Modbus
 
         public override void Execute()
         {
-        }
+            ModbusClient modbusClient = null;
+            
+            {
+                modbusClient = new ModbusClient(ModbusHost.Value, ModbusPort.Value);
+                modbusClient.ConnectionTimeout = 5000;
+                modbusClient.Connect();
+                modbusClient.UnitIdentifier = (byte)ModbusID.Value;
 
-        private void FetchFromModbusServer()
+                switch (FunctionCode.Value)
+                                {
+                    case FunctionCodeEnum.FC_06:
+                        modbusClient.WriteSingleRegister(ModbusAddress1.Value, ModbusTX);
+                        break;
+                }
+            }
+            {
+            }
+        }        
+        private void FetchFromModbusServer() 
         {
             if (ModbusHost.HasValue && ModbusAddress1.Value > 0)
             {
