@@ -8,39 +8,27 @@ using System.Threading;
 using LogicModule.Nodes.Helpers;
 using LogicModule.ObjectModel;
 using LogicModule.ObjectModel.TypeSystem;
+using System.Globalization;
 
-namespace alram_lechner_gmx_at.logic.InfluxDb
+namespace alram_lechner_gmx_at.logic.InfluxDb2
 {
 
     public class WriteNode : LogicNodeBase
     {
         [Parameter(DisplayOrder = 1, IsRequired = true, IsDefaultShown = false)]
-        public StringValueObject InfluxDbHost { get; private set; }
+        public StringValueObject InfluxDbUrl { get; private set; }
 
-        [Parameter(DisplayOrder = 2, IsRequired = true, IsDefaultShown = false)]
-        public IntValueObject InfluxDbPort { get; private set; }
-
-        [Parameter(DisplayOrder = 3, IsRequired = true, IsDefaultShown = false)]
-        public StringValueObject InfluxDbName { get; private set; }
-
-        [Parameter(DisplayOrder = 4, IsRequired = true, IsDefaultShown = true, AsTitle = true)]
+        [Parameter(DisplayOrder = 4, IsRequired = true, IsDefaultShown = true)]
         public StringValueObject InfluxMeasureName { get; private set; }
 
-        [Parameter(DisplayOrder = 5, IsRequired = true, IsDefaultShown = false)]
-        public StringValueObject InfluxDbMeasureTags { get; private set; }
+        [Parameter(DisplayOrder = 5, IsRequired = true, IsDefaultShown = true)]
+        public StringValueObject InfluxMeasureTags { get; private set; }
 
-        // TODO: maybe repeated?
         [Parameter(DisplayOrder = 6, IsRequired = true, IsDefaultShown = false)]
-        public StringValueObject InfluxDbMeasureFieldName1 { get; private set; }
+        public StringValueObject InfluxMeasureFieldName { get; private set; }
 
         [Input(DisplayOrder = 7, IsInput = true, IsRequired = true)]
-        public DoubleValueObject InfluxDbMeasureFieldValue1 { get; private set; }
-
-        [Parameter(DisplayOrder = 8, IsRequired = false, IsDefaultShown = false)]
-        public StringValueObject InfluxDbMeasureFieldName2 { get; private set; }
-
-        [Input(DisplayOrder = 9, IsInput = true, IsRequired = false)]
-        public DoubleValueObject InfluxDbMeasureFieldValue2 { get; private set; }
+        public DoubleValueObject InfluxMeasureFieldValue { get; private set; }
 
         [Output(DisplayOrder = 1, IsRequired = false, IsDefaultShown = false)]
         public IntValueObject ErrorCode { get; private set; }
@@ -48,22 +36,73 @@ namespace alram_lechner_gmx_at.logic.InfluxDb
         [Output(DisplayOrder = 2, IsRequired = false, IsDefaultShown = false)]
         public StringValueObject ErrorMessage { get; private set; }
 
+        //IList<bool> changedInputs = new List<bool>();
+
+        private ITypeService typeService = null;
+        //private ISchedulerService schedulerService;
+        //private SchedulerToken schedulerToken = null;
+
         public WriteNode(INodeContext context) : base(context)
         {
             context.ThrowIfNull("context");
-            ITypeService typeService = context.GetService<ITypeService>();
-            this.InfluxDbHost = typeService.CreateString(PortTypes.String, "Influx DB host");
-            this.InfluxDbPort = typeService.CreateInt(PortTypes.Integer, "Influx DB Port", 8086);
-            this.InfluxDbName = typeService.CreateString(PortTypes.String, "Influx DB name");
-            this.InfluxMeasureName = typeService.CreateString(PortTypes.String, "Measure name");
-            this.InfluxDbMeasureTags = typeService.CreateString(PortTypes.String, "Measure tags");
-            this.InfluxDbMeasureFieldName1 = typeService.CreateString(PortTypes.String, "Measure field name 1");
-            this.InfluxDbMeasureFieldValue1 = typeService.CreateDouble(PortTypes.Float, "Measure value 1");
-            this.InfluxDbMeasureFieldName2 = typeService.CreateString(PortTypes.String, "Measure field name 2");
-            this.InfluxDbMeasureFieldValue2 = typeService.CreateDouble(PortTypes.Float, "Measure value 2");
+            typeService = context.GetService<ITypeService>();
+            // schedulerService = context.GetService<ISchedulerService>();
+            this.InfluxDbUrl = typeService.CreateString(PortTypes.String, "Influx DB URL", "http://<hostname>:<port>/write?db=<database>");
+            this.InfluxMeasureName = typeService.CreateString(PortTypes.String, "Measure name", "sensor");
+            this.InfluxMeasureTags = typeService.CreateString(PortTypes.String, "Tags", "room=kitchen");
+            // UpdateMeasureFieldCount(null, null);
+            this.InfluxMeasureFieldName = typeService.CreateString(PortTypes.String, "Measure field name", "temp");
+            this.InfluxMeasureFieldValue = typeService.CreateDouble(PortTypes.Number, "Measure value");
             this.ErrorCode = typeService.CreateInt(PortTypes.Integer, "HTTP status-code");
-            this.ErrorMessage = typeService.CreateString(PortTypes.String, "SMTP Benutzer");
+            this.ErrorMessage = typeService.CreateString(PortTypes.String, "Error message");
         }
+        /*
+        private void MeasureFieldCountUpdated(object sender, ValueChangedEventArgs args)
+        {
+            int desiredLength = MeasureFieldCount.Value;
+
+            if (MeasureFields.Count < desiredLength * InputsPerField)
+            {
+                for (int i = MeasureFields.Count; i < desiredLength * InputsPerField; i++)
+                {
+
+                    switch (i % InputsPerField)
+                    {
+                        case 0:
+                            IValueObject fieldName = typeService.CreateString(PortTypes.String, String.Format("Field name {0}", i / InputsPerField + 1), "");
+                            MeasureFields.Add(fieldName);
+                            break;
+                        case 1:
+                            IValueObject tags = typeService.CreateString(PortTypes.String, String.Format("Tags for {0}", (int)(i / InputsPerField + 1)));
+                            MeasureFields.Add(tags);
+                            break;
+                        case 2:
+                            IValueObject fieldValue = typeService.CreateDouble(PortTypes.Float, String.Format("Value for {0}", (int)(i / InputsPerField + 1)), 0);
+                            MeasureFields.Add(fieldValue);
+                            break;
+                        default: break;
+                    }
+                }
+
+            }
+            else
+            {
+                while (MeasureFields.Count > desiredLength)
+                {
+                    MeasureFields.RemoveAt(MeasureFields.Count - 1);
+                }
+            }
+
+            while (changedInputs.Count < desiredLength)
+            {
+                changedInputs.Add(false);
+            }
+            while (changedInputs.Count > desiredLength)
+            {
+                changedInputs.RemoveAt(0);
+            }
+        }
+        */
 
         public override void Startup()
         {
@@ -77,24 +116,19 @@ namespace alram_lechner_gmx_at.logic.InfluxDb
 
         public override void Execute()
         {
-            if (!InfluxDbHost.HasValue || !InfluxDbPort.HasValue || !InfluxDbName.HasValue || !InfluxMeasureName.HasValue 
-                || !InfluxDbMeasureFieldName1.HasValue || !InfluxDbMeasureFieldValue1.HasValue)
+            // if (!InfluxDbHost.HasValue || !InfluxDbPort.HasValue || !InfluxDbName.HasValue || !InfluxMeasureName.HasValue)
+            if (!InfluxDbUrl.HasValue || !InfluxMeasureName.HasValue ||!InfluxMeasureFieldName.HasValue || !InfluxMeasureFieldValue.HasValue)
             {
                 return;
             }
-
-            // HACK: only 2nd value trigger ...
-            if (InfluxDbMeasureFieldName2.HasValue && !InfluxDbMeasureFieldValue2.WasSet)
-            {
-                return;
-            }
-
             WriteDatapointAsync();
         }
 
         public void WriteDatapointAsync()
         {
-            var thread = new Thread(() => {
+            // schedulerToken = null;
+            var thread = new Thread(() =>
+            {
                 WriteDatapointSync(
                     (errorCode, errorMessage) =>
                     {
@@ -109,40 +143,46 @@ namespace alram_lechner_gmx_at.logic.InfluxDb
                     });
             });
             thread.Start();
-
         }
-
-
 
         public void WriteDatapointSync(Action<int?, string> SetResultCallback)
         {
-            String URL = "http://" + InfluxDbHost.Value + ":" + InfluxDbPort.Value + "/write?db=" + InfluxDbName + "&precision=s";
-            String Body = InfluxMeasureName.Value;
-            if (InfluxDbMeasureTags .HasValue)
+            // String URL = "http://" + InfluxDbHost.Value + ":" + InfluxDbPort.Value + "/write?db=" + InfluxDbName + "&precision=s";
+            UriBuilder uriBuilder = new UriBuilder(InfluxDbUrl.Value);
+            if (uriBuilder.Port == -1)
             {
-                Body += "," + InfluxDbMeasureTags.Value;
+                uriBuilder.Port = 8086;
             }
-            Body += " ";
-            Body += InfluxDbMeasureFieldName1.Value + "=" + InfluxDbMeasureFieldValue1.Value;
-            if (InfluxDbMeasureFieldName2.HasValue && InfluxDbMeasureFieldValue2.HasValue)
-            {
-                Body += "," + InfluxDbMeasureFieldName2.Value + "=" + InfluxDbMeasureFieldValue2.Value;
-            }
+            String queryToAppend = "precision=s";
+            if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
+                uriBuilder.Query = uriBuilder.Query.Substring(1) + "&" + queryToAppend;
+            else
+                uriBuilder.Query = queryToAppend;
 
+            // Open HTTP connection:
+            String Body = "";
             try
             {
-            Uri uri = new Uri(URL);
-            HttpWebRequest client = (HttpWebRequest)HttpWebRequest.Create(uri);
+                HttpWebRequest client = (HttpWebRequest)HttpWebRequest.Create(uriBuilder.Uri);
                 client.Method = "POST";
                 client.ContentType = "text/plain";
+
                 using (var request = client.GetRequestStream())
                 {
                     using (var writer = new StreamWriter(request))
                     {
+                        Body = InfluxMeasureName.Value;
+                        if (InfluxMeasureTags.HasValue)
+                        {
+                            Body += "," + InfluxMeasureTags.Value;
+                        }
+                                
+                        Body += " ";
+                        Body += InfluxMeasureFieldName.Value + "=" + InfluxMeasureFieldValue.Value.ToString("G", CultureInfo.InvariantCulture);
+
                         writer.Write(Body);
                     }
                 }
-
                 var response = client.GetResponse();
                 using (var result = response.GetResponseStream())
                 {
@@ -162,7 +202,7 @@ namespace alram_lechner_gmx_at.logic.InfluxDb
                         {
                             using (var reader = new StreamReader(result))
                             {
-                                SetResultCallback((int)errorResponse.StatusCode, reader.ReadToEnd());
+                                SetResultCallback((int)errorResponse.StatusCode, reader.ReadToEnd() + "; Line was: " + Body);
                                 return;
                             }
                         }
@@ -171,15 +211,13 @@ namespace alram_lechner_gmx_at.logic.InfluxDb
                     {
                     }
                 }
-                SetResultCallback(998, "Unknown error");
+                SetResultCallback(998, "Unknown error" + "; Line was: " + Body);
             }
             catch (Exception e)
             {
-                SetResultCallback(999, e.Message);
+                SetResultCallback(999, e.Message + "; Line was: " + Body);
                 return;
             }
         }
-
-
     }
 }

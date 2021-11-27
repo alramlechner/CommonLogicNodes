@@ -1,24 +1,24 @@
 ﻿{
   "PackageFormatVersion": "1.0",
-  "Assembly": "alram_lechner_gmx_at.logic.InfluxDb.dll",
+  "Assembly": "alram_lechner_gmx_at.logic.InfluxDb2.dll",
   "PackageName": {
-    "en": "InfluxDB Nodes"
+    "en": "InfluxDB Nodes v2"
   },
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.0.14",
+  "Version": "0.2.0",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "alram_lechner_gmx_at",
   "License": "Free",
-  "PackageId": "C2EC41A1-B27C-4D49-BFBF-5CEE4A7BE255",
+  "PackageId": "7A5A65A8-EA71-466E-938D-419EC2C2F38D",
   "Nodes": [
     {
-      "Type": "alram_lechner_gmx_at.logic.InfluxDb.WriteNode",
+      "Type": "alram_lechner_gmx_at.logic.InfluxDb2.WriteNode",
       "Name": {
-        "en": "Write data to InfluxDb",
-        "de": "InfluxDB Daten schreiben"
+        "en": "Write data to InfluxDb v2",
+        "de": "InfluxDB Daten schreiben v2"
       },
       "IsConverter": false,
       "Category": "Node",
