@@ -16,3 +16,5 @@
 /ModbusClient/obj
 /InfluxDbNode/bin
 /InfluxDbNode/obj
+/AVRControl/bin/Debug
+/AVRControl/obj/Debug

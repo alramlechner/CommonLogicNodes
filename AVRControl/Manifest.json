@@ -1,0 +1,30 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "alram_lechner_gmx_at.logic.AvrControl.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll"
+  ],
+  "Version": "0.0.12",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
+  "PackageId": "CFEA590E-7C34-47A6-AC76-E9D99F7A7678",
+  "Nodes": [
+    {
+      "Type": "alram_lechner_gmx_at.logic.AvrControl.RunMacro",
+      "Name": {
+        "en": "Send macro to AVR Control unit",
+        "de": "Sendet macro zum AVR Control"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/Speaker.png",
+      "HelpTooltip": {
+        "en": "Run AVR Control Macro",
+        "de": "Startet AVR Control Makro"
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
