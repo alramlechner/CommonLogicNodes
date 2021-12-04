@@ -7,7 +7,7 @@
   "DependentFiles": [
     "LogicModule.Nodes.Helpers.dll"
   ],
-  "Version": "0.2.0",
+  "Version": "0.2.11",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "alram_lechner_gmx_at",
@@ -26,6 +26,21 @@
       "HelpTooltip": {
         "en": "Write data to InfluxDb measurement via REST API.",
         "de": "Schreibt InfluxDB measurement Daten via REST API."
+      },
+      "HelpFileReference": null
+    },
+    {
+      "Type": "alram_lechner_gmx_at.logic.InfluxDb2.WriteElectricMeter",
+      "Name": {
+        "en": "Write value from electric meter to InfluxDb v2",
+        "de": "Stromzähler Daten in InfluxDB schreiben v2"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/Influxdb.png",
+      "HelpTooltip": {
+        "en": "Write data of electric meter to InfluxDb measurement via REST API.",
+        "de": "Schreibt Stromzähler Daten zu InfluxDB Daten via REST API."
       },
       "HelpFileReference": null
     }

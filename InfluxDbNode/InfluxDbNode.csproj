@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InfluxWriterHelper.cs" />
+    <Compile Include="WriteElectricMeter.cs" />
     <Compile Include="WriteNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
