@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InfluxWriterHelper.cs" />
+    <Compile Include="WriteThreePhaseElectricMeter.cs" />
     <Compile Include="WriteElectricMeter.cs" />
     <Compile Include="WriteNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
