@@ -47,6 +47,9 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
         private ITypeService TypeService = null;
 
+        private double LastDailyMeterCounterValueSent = -1;
+        private DateTime LastDailyMeterCounterValueTime = new DateTime(2010, 1, 1);
+
         public WriteElectricMeter(INodeContext context) : base(context)
         {
             context.ThrowIfNull("context");
@@ -90,7 +93,19 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
             if (this.DailyMeterValue.HasValue && this.DailyMeterValue.WasSet)
             {
-                WriteDatapointAsync("intermediatecounter", this.DailyMeterValue.Value);
+
+                if (!(LastDailyMeterCounterValueSent == this.DailyMeterValue.Value
+                    && DateTime.Compare(LastDailyMeterCounterValueTime, DateTime.Now.Subtract(TimeSpan.FromSeconds(10))) > 0))
+                {
+                    WriteDatapointAsync("intermediatecounter", this.DailyMeterValue.Value);
+                    LastDailyMeterCounterValueSent = this.DailyMeterValue.Value;
+                    LastDailyMeterCounterValueTime = DateTime.Now;
+                } else
+                {
+                    // debugging only!
+                    WriteDatapointAsync("ignored_intermediatecounter", this.DailyMeterValue.Value);
+                }
+
                 if (this.DailyMeterValue.Value > 0)
                 {
                     this.ResetDailyMeterCounter.Value = true;

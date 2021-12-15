@@ -71,6 +71,9 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
         private ITypeService TypeService = null;
 
+        private double[] LastDailyMeterCounterValueSent = new double[] { -1, -1, -1 };
+        private DateTime[] LastDailyMeterCounterValueTime = new DateTime[] { new DateTime(2010, 1, 1), new DateTime(2010, 1, 1), new DateTime(2010, 1, 1) };
+
         public WriteThreePhaseElectricMeter(INodeContext context) : base(context)
         {
             context.ThrowIfNull("context");
@@ -133,12 +136,19 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
             if (this.L1DailyMeterValue.HasValue && this.L1DailyMeterValue.WasSet)
             {
-                WriteDatapointAsync("intermediatecounter", "phase=L1", this.L1DailyMeterValue.Value);
+                // check if same value has been sent a few seconds before ...
+                if (!(LastDailyMeterCounterValueSent[0] == this.L1DailyMeterValue.Value 
+                    && DateTime.Compare(LastDailyMeterCounterValueTime[0], DateTime.Now.Subtract(TimeSpan.FromSeconds(10))) > 0))
+                {
+                    WriteDatapointAsync("intermediatecounter", "phase=L1", this.L1DailyMeterValue.Value);
+                    LastDailyMeterCounterValueSent[0] = this.L1DailyMeterValue.Value;
+                    LastDailyMeterCounterValueTime[0] = DateTime.Now;
+                    writeAggregatedDailyMeter = true;
+                }
                 if (this.L1DailyMeterValue.Value > 0)
                 {
                     this.L1ResetDailyMeterCounter.Value = true;
                 }
-                writeAggregatedDailyMeter = true;
             }
 
             // L2
@@ -156,12 +166,20 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
             if (this.L2DailyMeterValue.HasValue && this.L2DailyMeterValue.WasSet)
             {
-                WriteDatapointAsync("intermediatecounter", "phase=L2", this.L2DailyMeterValue.Value);
+                // check if same value has been sent a few seconds before ...
+                if (!(LastDailyMeterCounterValueSent[1] == this.L2DailyMeterValue.Value
+                    && DateTime.Compare(LastDailyMeterCounterValueTime[1], DateTime.Now.Subtract(TimeSpan.FromSeconds(10))) > 0))
+                {
+                    WriteDatapointAsync("intermediatecounter", "phase=L2", this.L2DailyMeterValue.Value);
+                    LastDailyMeterCounterValueSent[1] = this.L2DailyMeterValue.Value;
+                    LastDailyMeterCounterValueTime[1] = DateTime.Now;
+                    writeAggregatedDailyMeter = true;
+                }
+
                 if (this.L2DailyMeterValue.Value > 0)
                 {
                     this.L2ResetDailyMeterCounter.Value = true;
                 }
-                writeAggregatedDailyMeter = true;
             }
 
             // L3
@@ -179,7 +197,15 @@ namespace alram_lechner_gmx_at.logic.InfluxDb2
 
             if (this.L3DailyMeterValue.HasValue && this.L3DailyMeterValue.WasSet)
             {
-                WriteDatapointAsync("intermediatecounter", "phase=L3", this.L3DailyMeterValue.Value);
+                // check if same value has been sent a few seconds before ...
+                if (!(LastDailyMeterCounterValueSent[2] == this.L3DailyMeterValue.Value
+                    && DateTime.Compare(LastDailyMeterCounterValueTime[2], DateTime.Now.Subtract(TimeSpan.FromSeconds(10))) > 0))
+                {
+                    WriteDatapointAsync("intermediatecounter", "phase=L3", this.L3DailyMeterValue.Value);
+                    LastDailyMeterCounterValueSent[2] = this.L3DailyMeterValue.Value;
+                    LastDailyMeterCounterValueTime[2] = DateTime.Now;
+                }
+
                 if (this.L3DailyMeterValue.Value > 0)
                 {
                     this.L3ResetDailyMeterCounter.Value = true;
