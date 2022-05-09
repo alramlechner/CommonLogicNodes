@@ -98,7 +98,8 @@ at LogicModule.Engine.Core.GraphRuntime.RunNodeCodeSafely(System.Action action, 
                 }
                 else
                 {
-                    SendCommand("avr power off");
+                    // SendCommand("avr power off");
+                    SendCommand("macro KITCHEN_RADIO_OFF");
                 }
             }
             if (this.VolumeRelativ.HasValue && this.VolumeRelativ.WasSet)
