@@ -25,8 +25,14 @@ namespace alram_lechner_gmx_at.logic.AvrControl
         [Input(DisplayOrder = 4, IsInput = true, IsRequired = false)]
         public BoolValueObject VolumeRelativ { get; private set; }
 
+        [Input(DisplayOrder = 5, IsInput = true, IsRequired = false)]
+        public BoolValueObject SpeakerBEnable { get; private set; }
+
         [Output(DisplayOrder = 1, IsDefaultShown = true)]
         public BoolValueObject OutputPower { get; private set; }
+
+        [Output(DisplayOrder = 2, IsDefaultShown = true)]
+        public BoolValueObject OutputSpeakerBEnable { get; private set; }
 
 
         [Output(DisplayOrder = 2, IsRequired = false, IsDefaultShown = false)]
@@ -34,8 +40,8 @@ namespace alram_lechner_gmx_at.logic.AvrControl
 
 
         private ITypeService typeService;
-        // private UdpClient udpReceiverClient;
-        // private IPEndPoint ipEndpointAvrControl;
+        private UdpClient udpReceiverClient;
+        private IPEndPoint ipEndpointAvrControl;
 
         public RunMacro(INodeContext context) : base(context)
         {
@@ -47,46 +53,50 @@ namespace alram_lechner_gmx_at.logic.AvrControl
             this.InputPower = this.typeService.CreateBool(PortTypes.Binary, "Power Switch", false);
             this.OutputPower = this.typeService.CreateBool(PortTypes.Binary, "Power Status", false);
             this.VolumeRelativ = this.typeService.CreateBool(PortTypes.Binary, "Volume relative", false);
+            this.SpeakerBEnable = this.typeService.CreateBool(PortTypes.Binary, "Speaker B enable", false);
+            this.OutputSpeakerBEnable = this.typeService.CreateBool(PortTypes.Binary, "Speaker B status", false);
             this.ErrorMessage = this.typeService.CreateString(PortTypes.String, "Errormessage", "");
         }
 
-        /*
         public void ReceiveCallback(IAsyncResult ar)
         {
             byte[] receiveBytes = udpReceiverClient.EndReceive(ar, ref ipEndpointAvrControl);
             string receiveString = Encoding.ASCII.GetString(receiveBytes);
-            // POWER:00000::off
-            if (receiveString.StartsWith("POWER:")) {
-                OutputPower.Value = receiveString.EndsWith("off");
+            if (receiveString.StartsWith("POWER:")) 
+            {
+                // POWER:00000::off
+                OutputPower.Value = receiveString.EndsWith("on");
+            } else if (receiveString.StartsWith("SPEAKER_B:")) 
+            {
+                // SPEAKER_B:00001::on
+                OutputSpeakerBEnable.Value = receiveString.EndsWith("on");
             }
+            else if (receiveString.StartsWith("MUTE:"))
+            {
+                // OutputMute.Value = receiveString.EndsWith("on");
+            }
+            else
+            {
+                ErrorMessage.Value = "Unkown status from AVR: '" + receiveString + "'";
+            }
+
             // needed?
             udpReceiverClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
         }
-        */
 
         
-    public override void Startup()
-    {
-            /*
-        An exception occurred during startup of node '53ebcf6a-af75-49c9-8769-29ffccb829f3' of type 'alram_lechner_gmx_at.logic.AvrControl.RunMacro'.The exception was:
-System.Net.Sockets.SocketException: The requested address is not valid in this context
-at System.Net.Sockets.Socket.Bind(System.Net.EndPoint local_end)[0x00000] in < filename unknown >:0
-at System.Net.Sockets.UdpClient.InitSocket(System.Net.EndPoint localEP)[0x00000] in < filename unknown >:0
-at System.Net.Sockets.UdpClient..ctor(System.Net.IPEndPoint localEP)[0x00000] in < filename unknown >:0
-at alram_lechner_gmx_at.logic.AvrControl.RunMacro.Startup()[0x00000] in < filename unknown >:0
-at LogicModule.Engine.Core.NodeRuntime.StartUp()[0x00000] in < filename unknown >:0
-at LogicModule.Engine.Core.GraphRuntime.RunNodeCodeSafely(System.Action action, INodeRuntimeInternal node, System.String nodeKey, Sy
-        // Receive a message and write it to the console.
-        ipEndpointAvrControl = new IPEndPoint(IPAddress.Parse(AvrControlIp.Value) , 14000);
-        this.udpReceiverClient = new UdpClient(ipEndpointAvrControl);
-        udpReceiverClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
-        */
-    }
+        public override void Startup()
+        {
+            // Receive a message and write it to the console.
+            ipEndpointAvrControl = new IPEndPoint(IPAddress.Parse("0.0.0.0") , 14000);
+            this.udpReceiverClient = new UdpClient(ipEndpointAvrControl);
+            udpReceiverClient.BeginReceive(new AsyncCallback(ReceiveCallback), null);
+        }
    
 
         public override void Execute()
         {
-           if (this.MacroName.HasValue && this.MacroName.WasSet)
+            if (this.MacroName.HasValue && this.MacroName.WasSet)
             {
                 SendCommand("macro " + this.MacroName.Value);
             }
@@ -98,8 +108,8 @@ at LogicModule.Engine.Core.GraphRuntime.RunNodeCodeSafely(System.Action action, 
                 }
                 else
                 {
-                    // SendCommand("avr power off");
-                    SendCommand("macro KITCHEN_RADIO_OFF");
+                    SendCommand("avr power off");
+                    // SendCommand("macro KITCHEN_RADIO_OFF");
                 }
             }
             if (this.VolumeRelativ.HasValue && this.VolumeRelativ.WasSet)
@@ -110,6 +120,17 @@ at LogicModule.Engine.Core.GraphRuntime.RunNodeCodeSafely(System.Action action, 
                 } else
                 {
                     SendCommand("AVR VOLDOWN");
+                }
+            }
+            if (this.SpeakerBEnable.HasValue && this.SpeakerBEnable.WasSet)
+            {
+                if (this.SpeakerBEnable.Value)
+                {
+                    SendCommand("AVR SPEAKER B ON");
+                }
+                else
+                {
+                    SendCommand("AVR SPEAKER B OFF");
                 }
             }
         }
