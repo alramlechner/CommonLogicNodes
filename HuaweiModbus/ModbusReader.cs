@@ -178,7 +178,7 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             }
 
             int[] readHoldingRegisters;
-            readHoldingRegisters = modbusClient.ReadInputRegisters(startRegister, registerToRead);
+            readHoldingRegisters = modbusClient.ReadHoldingRegisters(startRegister, registerToRead);
 
             double result = 0;
             string result_str = "";
