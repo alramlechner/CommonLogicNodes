@@ -1,0 +1,31 @@
+﻿{
+  "PackageFormatVersion": "1.0",
+  "Assembly": "alram_lechner_gmx_at.logic.HuaweiModbus.dll",
+  "DependentFiles": [
+    "LogicModule.Nodes.Helpers.dll",
+	"EasyModbus.dll"
+  ],
+  "Version": "0.0.1",
+  "Author": "Alram Lechner", 
+  "Copyright": "Alram Lechner",
+  "DeveloperId": "alram_lechner_gmx_at",
+  "License": "Free",
+  "PackageId": "F2330AA0-51CA-4DF6-A5AE-4BE269B9FE13",
+  "Nodes": [
+    {
+      "Type": "alram_lechner_gmx_at.logic.HuaweiModbus.HuaweiModbusClientNode",
+      "Name": {
+        "en": "Query Huawei inverter",
+        "de": "Huawei Wechselrichter auslesen"
+      },
+      "IsConverter": false,
+      "Category": "Node",
+      "DefaultIcon": "icons/GenericLogicNode.png",
+      "HelpTooltip": {
+        "en": "Query values from Huawei Inverter.",
+        "de": "Huawei Wechselrichter auslesen."
+      },
+      "HelpFileReference": null
+    }
+  ]
+}
