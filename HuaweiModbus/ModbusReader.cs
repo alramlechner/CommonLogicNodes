@@ -48,64 +48,64 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
 
 
         [Output]
-        public IntValueObject currentPVPower { get; private set; }
+        public DoubleValueObject currentPVPower { get; private set; }
 
         [Output]
-        public IntValueObject currentACPower { get; private set; }
+        public DoubleValueObject currentACPower { get; private set; }
 
         [Output]
-        public IntValueObject currentGridPower { get; private set; }
+        public DoubleValueObject currentGridPower { get; private set; }
 
         [Output]
-        public IntValueObject currentBatteryPower { get; private set; }
+        public DoubleValueObject currentBatteryPower { get; private set; }
 
         [Output]
-        public IntValueObject todayPVEnergy { get; private set; }
+        public DoubleValueObject todayPVEnergy { get; private set; }
 
         [Output]
-        public IntValueObject totalPVEnergy { get; private set; }
+        public DoubleValueObject totalPVEnergy { get; private set; }
 
         [Output]
-        public IntValueObject inverterTemperature { get; private set; }
+        public DoubleValueObject inverterTemperature { get; private set; }
 
         [Output]
-        public IntValueObject mppt1Voltage { get; private set; }
+        public DoubleValueObject mppt1Voltage { get; private set; }
 
         [Output]
-        public IntValueObject mppt1Current { get; private set; }
+        public DoubleValueObject mppt1Current { get; private set; }
 
         [Output]
-        public IntValueObject mppt2Voltage { get; private set; }
+        public DoubleValueObject mppt2Voltage { get; private set; }
 
         [Output]
-        public IntValueObject mppt2Current { get; private set; }
+        public DoubleValueObject mppt2Current { get; private set; }
 
         [Output]
-        public IntValueObject totalGridImportedEnergy { get; private set; }
+        public DoubleValueObject totalGridImportedEnergy { get; private set; }
 
         [Output]
-        public IntValueObject totalGridExportedEnergy { get; private set; }
+        public DoubleValueObject totalGridExportedEnergy { get; private set; }
 
         [Output]
-        public IntValueObject currentBatterySOC { get; private set; }
+        public DoubleValueObject currentBatterySOC { get; private set; }
 
         [Output]
-        public IntValueObject todaysPeakPVPower { get; private set; }
+        public DoubleValueObject todaysPeakPVPower { get; private set; }
 
         [Output]
-        public IntValueObject currentReactivePower { get; private set; }
+        public DoubleValueObject currentReactivePower { get; private set; }
 
         [Output]
-        public IntValueObject currentBatteryStatus { get; private set; }
+        public DoubleValueObject currentBatteryStatus { get; private set; }
 
         [Output]
-        public IntValueObject todayBatteryChargedEnergy { get; private set; }
+        public DoubleValueObject todayBatteryChargedEnergy { get; private set; }
 
         [Output]
-        public IntValueObject todayBatteryDischargedEnergy { get; private set; }
+        public DoubleValueObject todayBatteryDischargedEnergy { get; private set; }
 
         [Output]
-        public IntValueObject batteryTemperature { get; private set; }
+        public DoubleValueObject batteryTemperature { get; private set; }
 
         [Output]
         public StringValueObject ErrorMessage { get; private set; }
@@ -121,26 +121,26 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             this.ModbusHost = typeService.CreateString(PortTypes.String, "Modbus TCP Host");
             this.ModbusPort = typeService.CreateInt(PortTypes.Integer, "Port", 502);
 
-            this.currentPVPower = typeService.CreateInt(PortTypes.Number, "Current PV power (inverter)");
-            this.currentACPower = typeService.CreateInt(PortTypes.Number, "Current AC power (inverter)");
-            this.currentGridPower = typeService.CreateInt(PortTypes.Number, "Current grid power (smartmeter)");
-            this.currentBatteryPower = typeService.CreateInt(PortTypes.Number, "Current battery power (inverter)");
-            this.todayPVEnergy = typeService.CreateInt(PortTypes.Number, "Today PV energy");
-            this.totalPVEnergy = typeService.CreateInt(PortTypes.Number, "Total PV energy");
-            this.inverterTemperature = typeService.CreateInt(PortTypes.Number, "Inverter temperature");
-            this.mppt1Voltage = typeService.CreateInt(PortTypes.Number, "MPPT 1 voltage");
-            this.mppt1Current = typeService.CreateInt(PortTypes.Number, "MPPT 1 current");
-            this.mppt2Voltage = typeService.CreateInt(PortTypes.Number, "MPPT 2 voltage");
-            this.mppt2Current = typeService.CreateInt(PortTypes.Number, "MPPT 2 current");
-            this.totalGridImportedEnergy = typeService.CreateInt(PortTypes.Number, "Total energy imported (smartmeter)");
-            this.totalGridExportedEnergy = typeService.CreateInt(PortTypes.Number, "Total energy exported (smartmeter)");
-            this.currentBatterySOC = typeService.CreateInt(PortTypes.Number, "Current battery SoC");
-            this.todaysPeakPVPower = typeService.CreateInt(PortTypes.Number, "Today PV peak power");
-            this.currentReactivePower = typeService.CreateInt(PortTypes.Number, "Current reactive power");
-            this.currentBatteryStatus = typeService.CreateInt(PortTypes.Number, "Current battery status");
-            this.todayBatteryChargedEnergy = typeService.CreateInt(PortTypes.Number, "Today battery charged energy");
-            this.todayBatteryDischargedEnergy = typeService.CreateInt(PortTypes.Number, "Today battery discharged engergy");
-            this.batteryTemperature = typeService.CreateInt(PortTypes.Number, "Battery temperature");
+            this.currentPVPower = typeService.CreateDouble(PortTypes.Number, "Current PV power (inverter)");
+            this.currentACPower = typeService.CreateDouble(PortTypes.Number, "Current AC power (inverter)");
+            this.currentGridPower = typeService.CreateDouble(PortTypes.Number, "Current grid power (smartmeter)");
+            this.currentBatteryPower = typeService.CreateDouble(PortTypes.Number, "Current battery power (inverter)");
+            this.todayPVEnergy = typeService.CreateDouble(PortTypes.Number, "Today PV energy");
+            this.totalPVEnergy = typeService.CreateDouble(PortTypes.Number, "Total PV energy");
+            this.inverterTemperature = typeService.CreateDouble(PortTypes.Number, "Inverter temperature");
+            this.mppt1Voltage = typeService.CreateDouble(PortTypes.Number, "MPPT 1 voltage");
+            this.mppt1Current = typeService.CreateDouble(PortTypes.Number, "MPPT 1 current");
+            this.mppt2Voltage = typeService.CreateDouble(PortTypes.Number, "MPPT 2 voltage");
+            this.mppt2Current = typeService.CreateDouble(PortTypes.Number, "MPPT 2 current");
+            this.totalGridImportedEnergy = typeService.CreateDouble(PortTypes.Number, "Total energy imported (smartmeter)");
+            this.totalGridExportedEnergy = typeService.CreateDouble(PortTypes.Number, "Total energy exported (smartmeter)");
+            this.currentBatterySOC = typeService.CreateDouble(PortTypes.Number, "Current battery SoC");
+            this.todaysPeakPVPower = typeService.CreateDouble(PortTypes.Number, "Today PV peak power");
+            this.currentReactivePower = typeService.CreateDouble(PortTypes.Number, "Current reactive power");
+            this.currentBatteryStatus = typeService.CreateDouble(PortTypes.Number, "Current battery status");
+            this.todayBatteryChargedEnergy = typeService.CreateDouble(PortTypes.Number, "Today battery charged energy");
+            this.todayBatteryDischargedEnergy = typeService.CreateDouble(PortTypes.Number, "Today battery discharged engergy");
+            this.batteryTemperature = typeService.CreateDouble(PortTypes.Number, "Battery temperature");
 
             this.ErrorMessage = typeService.CreateString(PortTypes.String, "RAW / Error");
             SchedulerService = context.GetService<ISchedulerService>();
