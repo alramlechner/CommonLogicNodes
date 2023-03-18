@@ -157,7 +157,7 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
         private int readRegister(ModbusClient modbusClient, int startRegister, String dataType)
         {
             ModbusClient.RegisterOrder regOrder;
-            regOrder = ModbusClient.RegisterOrder.LowHigh;
+            regOrder = ModbusClient.RegisterOrder.HighLow;
 
             int registerToRead;
             switch(dataType)
@@ -178,7 +178,22 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             }
 
             int[] readHoldingRegisters;
-            readHoldingRegisters = modbusClient.ReadHoldingRegisters(startRegister, registerToRead);
+            int retry = 5;
+
+            while(true)
+                try
+                {
+                    readHoldingRegisters = modbusClient.ReadHoldingRegisters(startRegister, registerToRead);
+                    break;
+                } catch (System.IO.IOException e)
+                {
+                    retry--;
+                    if (retry == 0)
+                    {
+                        return -1;
+                    }
+                    System.Threading.Thread.Sleep(500);
+                }
 
             double result = 0;
             string result_str = "";
@@ -238,26 +253,27 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
                     // see: https://knx-user-forum.de/forum/%C3%B6ffentlicher-bereich/knx-eib-forum/1643359-gira-x1-und-modbus-tcp-mit-logikbaustein/page7#post1844442
                     System.Threading.Thread.Sleep(700);
 
+                    this.mppt1Voltage.Value = readRegister(modbusClient, 32016, DataTypeEnum.INT16_SIGNED) / 10.0;
+                    this.mppt1Current.Value = readRegister(modbusClient, 32017, DataTypeEnum.INT16_SIGNED) / 100.0;
+                    this.mppt2Voltage.Value = readRegister(modbusClient, 32018, DataTypeEnum.INT16_SIGNED) / 10.0;
+                    this.mppt2Current.Value = readRegister(modbusClient, 32019, DataTypeEnum.INT16_SIGNED) / 100.0;
                     this.currentPVPower.Value = readRegister(modbusClient, 32064, DataTypeEnum.INT32);
-                    this.currentACPower.Value = readRegister(modbusClient, 32080, DataTypeEnum.INT32);
-                    this.currentGridPower.Value = readRegister(modbusClient, 37113, DataTypeEnum.INT32);
-                    this.currentBatteryPower.Value = readRegister(modbusClient, 37001, DataTypeEnum.INT32);
-                    this.todayPVEnergy.Value = readRegister(modbusClient, 32114, DataTypeEnum.INT32) / 100; // unsigned!
-                    this.totalPVEnergy.Value = readRegister(modbusClient, 32106, DataTypeEnum.INT32) / 100; // unsigned!
-                    this.inverterTemperature.Value = readRegister(modbusClient, 32087, DataTypeEnum.INT16_SIGNED) / 10; 
-                    this.mppt1Voltage.Value = readRegister(modbusClient, 32016, DataTypeEnum.INT16_SIGNED) / 10;
-                    this.mppt1Current.Value = readRegister(modbusClient, 32017, DataTypeEnum.INT16_SIGNED) / 100;
-                    this.mppt2Voltage.Value = readRegister(modbusClient, 32018, DataTypeEnum.INT16_SIGNED) / 10;
-                    this.mppt2Current.Value = readRegister(modbusClient, 32019, DataTypeEnum.INT16_SIGNED) / 100;
-                    this.totalGridImportedEnergy.Value = readRegister(modbusClient, 37121, DataTypeEnum.INT32) / 100;
-                    this.totalGridExportedEnergy.Value = readRegister(modbusClient, 37119, DataTypeEnum.INT32) / 100;
-                    this.currentBatterySOC.Value = readRegister(modbusClient, 37004, DataTypeEnum.INT16_UNSIGNED) / 10;
                     this.todaysPeakPVPower.Value = readRegister(modbusClient, 32078, DataTypeEnum.INT32);
+                    this.currentACPower.Value = readRegister(modbusClient, 32080, DataTypeEnum.INT32);
                     this.currentReactivePower.Value = readRegister(modbusClient, 32082, DataTypeEnum.INT32);
+                    this.inverterTemperature.Value = readRegister(modbusClient, 32087, DataTypeEnum.INT16_SIGNED) / 10.0; 
+                    this.totalPVEnergy.Value = readRegister(modbusClient, 32106, DataTypeEnum.INT32) / 100.0; // unsigned!
+                    this.todayPVEnergy.Value = readRegister(modbusClient, 32114, DataTypeEnum.INT32) / 100.0; // unsigned!
+
                     this.currentBatteryStatus.Value = readRegister(modbusClient, 37000, DataTypeEnum.INT16_UNSIGNED);
+                    this.currentBatteryPower.Value = readRegister(modbusClient, 37001, DataTypeEnum.INT32);
+                    this.currentBatterySOC.Value = readRegister(modbusClient, 37004, DataTypeEnum.INT16_UNSIGNED) / 10.0;
                     this.todayBatteryChargedEnergy.Value = readRegister(modbusClient, 37015, DataTypeEnum.INT32); // unsigned!
                     this.todayBatteryDischargedEnergy.Value = readRegister(modbusClient, 37017, DataTypeEnum.INT32); // unsigned!
-                    this.batteryTemperature.Value = readRegister(modbusClient, 37022, DataTypeEnum.INT16_SIGNED) / 10;
+                    this.batteryTemperature.Value = readRegister(modbusClient, 37022, DataTypeEnum.INT16_SIGNED) / 10.0;
+                    this.currentGridPower.Value = readRegister(modbusClient, 37113, DataTypeEnum.INT32);
+                    this.totalGridExportedEnergy.Value = readRegister(modbusClient, 37119, DataTypeEnum.INT32) / 100.0;
+                    this.totalGridImportedEnergy.Value = readRegister(modbusClient, 37121, DataTypeEnum.INT32) / 100.0;
 
                     this.SchedulerService.InvokeIn(new TimeSpan(0, 0, TimeSpan.Value), FetchFromModbusServer);
 
