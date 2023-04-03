@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace alram_lechner_gmx_at.logic.HuaweiModbus
 {
@@ -238,6 +239,12 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
         }
 
         private void FetchFromModbusServer()
+        {
+            Thread thread1 = new Thread(FetchFromModbusServerAsync);
+            thread1.Start();
+        }
+
+        private void FetchFromModbusServerAsync()
         {
             ErrorMessage.Value = "";
             if (ModbusHost.HasValue)
