@@ -5,7 +5,7 @@
     "LogicModule.Nodes.Helpers.dll",
 	"EasyModbus.dll"
   ],
-  "Version": "0.0.5",
+  "Version": "0.0.6",
   "Author": "Alram Lechner", 
   "Copyright": "Alram Lechner",
   "DeveloperId": "alram_lechner_gmx_at",

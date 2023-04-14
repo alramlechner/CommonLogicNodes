@@ -47,6 +47,17 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
         [Parameter(DisplayOrder = 3, InitOrder = 3, IsDefaultShown = false)]
         public IntValueObject ModbusPort { get; private set; }
 
+        [Input(DisplayOrder = 1, IsInput = true, IsRequired = false)]
+        public DoubleValueObject chargePowerMax { get; private set; }
+
+        [Input(DisplayOrder = 2, IsInput = true, IsRequired = false)]
+        public DoubleValueObject dischargePowerMax { get; private set; }
+
+        [Input(DisplayOrder = 3, IsInput = true, IsRequired = false)]
+        public DoubleValueObject chargingCutoff { get; private set; }
+
+        [Input(DisplayOrder = 4, IsInput = true, IsRequired = false)]
+        public DoubleValueObject dischargingCutoff { get; private set; }
 
         [Output]
         public DoubleValueObject currentPVPower { get; private set; }
@@ -122,6 +133,11 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             this.ModbusHost = typeService.CreateString(PortTypes.String, "Modbus TCP Host");
             this.ModbusPort = typeService.CreateInt(PortTypes.Integer, "Port", 502);
 
+            this.chargePowerMax = typeService.CreateDouble(PortTypes.Number, "Max. battery charge power (W)");
+            this.dischargePowerMax = typeService.CreateDouble(PortTypes.Number, "Max. battery discharge power (W)");
+            this.chargingCutoff = typeService.CreateDouble(PortTypes.Number, "Charging cutoff capacity (%)");
+            this.dischargingCutoff = typeService.CreateDouble(PortTypes.Number, "Discharging cutoff capacity (%)");
+
             this.currentPVPower = typeService.CreateDouble(PortTypes.Number, "Current PV power (inverter)");
             this.currentACPower = typeService.CreateDouble(PortTypes.Number, "Current AC power (inverter)");
             this.currentGridPower = typeService.CreateDouble(PortTypes.Number, "Current grid power (smartmeter)");
@@ -153,9 +169,64 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
 
         public override void Execute()
         {
+            if ((this.chargePowerMax.HasValue && this.chargePowerMax.WasSet))
+            {
+                writeRegister(47075, (int)this.chargePowerMax.Value, DataTypeEnum.INT32);
+            }
+            if ((this.dischargePowerMax.HasValue && this.dischargePowerMax.WasSet))
+            {
+                writeRegister(47077, (int)this.dischargePowerMax.Value, DataTypeEnum.INT32);
+            }
+            if ((this.chargingCutoff.HasValue && this.chargingCutoff.WasSet))
+            {
+                writeRegister(47081, (int)this.chargingCutoff.Value, DataTypeEnum.INT16_UNSIGNED);
+            }
+            if ((this.dischargingCutoff.HasValue && this.dischargingCutoff.WasSet))
+            {
+                writeRegister(47082, (int)this.dischargingCutoff.Value, DataTypeEnum.INT16_UNSIGNED);
+            }
         }
 
-        private int readRegister(ModbusClient modbusClient, int startRegister, String dataType)
+        private void writeRegister(int register, int value, String dataType)
+        {
+            ModbusClient modbusClient = null;
+            try
+            {
+                modbusClient = new ModbusClient(ModbusHost.Value, ModbusPort.Value);
+                modbusClient.ConnectionTimeout = 5000;
+                modbusClient.Connect();
+                modbusClient.UnitIdentifier = 1;
+
+                // needed?
+                System.Threading.Thread.Sleep(700);
+                switch (dataType)
+                {
+                    case DataTypeEnum.INT32:
+                        int[] toWrite = ModbusClient.ConvertIntToRegisters(value, ModbusClient.RegisterOrder.HighLow);
+                        modbusClient.WriteMultipleRegisters(register, toWrite);
+                        break;
+                    case DataTypeEnum.INT16_UNSIGNED:
+                        modbusClient.WriteSingleRegister(register, value);
+                        break;
+                    default:
+                        this.ErrorMessage.Value = "INTERNAL: unsupported datatype";
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                this.ErrorMessage.Value = e.ToString();
+            }
+            finally
+            {
+                if (modbusClient != null)
+                {
+                    modbusClient.Disconnect();
+                }
+            }
+        }
+
+    private int readRegister(ModbusClient modbusClient, int startRegister, String dataType)
         {
             ModbusClient.RegisterOrder regOrder;
             regOrder = ModbusClient.RegisterOrder.HighLow;
