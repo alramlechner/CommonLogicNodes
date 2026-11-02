@@ -11,6 +11,13 @@ using System.Threading.Tasks;
 
 namespace alram_lechner_gmx_at.logic.AvrControl
 {
+    static class SourceEnum
+    {
+        public const string CD = "CD";
+        public const string RADIO = "Radio";
+        public static string[] VALUES = new[] { CD, RADIO };
+    }
+
     public class RunMacro : LogicNodeBase
     {
         [Parameter(DisplayOrder = 1, IsRequired = true, IsDefaultShown = false)]
@@ -28,11 +35,30 @@ namespace alram_lechner_gmx_at.logic.AvrControl
         [Input(DisplayOrder = 5, IsInput = true, IsRequired = false)]
         public BoolValueObject SpeakerBEnable { get; private set; }
 
+        [Input(DisplayOrder = 6, IsInput = true, IsRequired = false)]
+        public BoolValueObject Mute { get; private set; }
+
+        [Input(DisplayOrder = 7, IsInput = true, IsRequired = false)]
+        public DoubleValueObject Volume { get; private set; }
+
+        [Input(DisplayOrder = 8, IsInput = true, IsRequired = false)]
+        public StringValueObject Source { get; private set; }
+
+
         [Output(DisplayOrder = 1, IsDefaultShown = true)]
         public BoolValueObject OutputPower { get; private set; }
 
         [Output(DisplayOrder = 2, IsDefaultShown = true)]
         public BoolValueObject OutputSpeakerBEnable { get; private set; }
+
+        [Output(DisplayOrder = 3, IsDefaultShown = true)]
+        public BoolValueObject OutputMute { get; private set; }
+
+        [Output(DisplayOrder = 4, IsDefaultShown = true)]
+        public DoubleValueObject OutputVolume { get; private set; }
+
+        [Output(DisplayOrder = 5, IsDefaultShown = true)]
+        public StringValueObject OutputSource { get; private set; }
 
 
         [Output(DisplayOrder = 2, IsRequired = false, IsDefaultShown = false)]
@@ -50,30 +76,57 @@ namespace alram_lechner_gmx_at.logic.AvrControl
             this.AvrControlIp = typeService.CreateString(PortTypes.String, "IP of AVR Control", "192.168.17.14");
             this.MacroName = this.typeService.CreateString(PortTypes.String, "Macroname", "KITCHEN_RADIO");
             this.MacroName.MaxLength = 20;            
+            
             this.InputPower = this.typeService.CreateBool(PortTypes.Binary, "Power Switch", false);
             this.OutputPower = this.typeService.CreateBool(PortTypes.Binary, "Power Status", false);
+            
             this.VolumeRelativ = this.typeService.CreateBool(PortTypes.Binary, "Volume relative", false);
+            
             this.SpeakerBEnable = this.typeService.CreateBool(PortTypes.Binary, "Speaker B enable", false);
             this.OutputSpeakerBEnable = this.typeService.CreateBool(PortTypes.Binary, "Speaker B status", false);
+            
             this.ErrorMessage = this.typeService.CreateString(PortTypes.String, "Errormessage", "");
+
+            this.Mute = this.typeService.CreateBool(PortTypes.Switch, "Mute", false);
+            this.OutputMute = this.typeService.CreateBool(PortTypes.Switch, "Mute status", false);
+
+            this.Volume = this.typeService.CreateDouble(PortTypes.Percent, "Volume absolut");
+            this.OutputVolume = this.typeService.CreateDouble(PortTypes.Percent, "Volume status");
+
+            // Source:
+            this.Source = typeService.CreateString(PortTypes.String, "Input");
+            this.OutputSource = typeService.CreateString(PortTypes.String, "Input status");
         }
 
         public void ReceiveCallback(IAsyncResult ar)
         {
             byte[] receiveBytes = udpReceiverClient.EndReceive(ar, ref ipEndpointAvrControl);
             string receiveString = Encoding.ASCII.GetString(receiveBytes);
-            if (receiveString.StartsWith("POWER:")) 
+            if (receiveString.StartsWith("POWER:"))
             {
                 // POWER:00000::off
                 OutputPower.Value = receiveString.EndsWith("on");
-            } else if (receiveString.StartsWith("SPEAKER_B:")) 
+            }
+            else if (receiveString.StartsWith("SPEAKER_B:"))
             {
                 // SPEAKER_B:00001::on
                 OutputSpeakerBEnable.Value = receiveString.EndsWith("on");
             }
             else if (receiveString.StartsWith("MUTE:"))
             {
-                // OutputMute.Value = receiveString.EndsWith("on");
+                OutputMute.Value = receiveString.EndsWith("on");
+            }
+            else if (receiveString.StartsWith("INPUT:"))
+            {
+                string[] parts = receiveString.Split(':');
+                // OutputSource.Value = Int32.Parse(parts[1]);
+                OutputSource.Value = parts[3];
+            }
+            else if (receiveString.StartsWith("VOLUME:"))
+            {
+                string[] parts = receiveString.Split(':');
+                // value between 0-180 needs => map to %
+                OutputVolume.Value = Int32.Parse(parts[1]) * 100 / 180;
             }
             else
             {
@@ -133,6 +186,25 @@ namespace alram_lechner_gmx_at.logic.AvrControl
                     SendCommand("AVR SPEAKER B OFF");
                 }
             }
+            if (this.Mute.HasValue && this.Mute.WasSet)
+            {
+                if (this.Mute.Value)
+                {
+                    SendCommand("AVR MUTE ON");
+                }
+                else
+                {
+                    SendCommand("AVR MUTE OFF");
+                }
+            }
+            if (this.Volume.HasValue && this.Volume.WasSet)
+            {
+                // value should be percent
+                int val =  (int) (this.Volume.Value * 180 / 100);
+                SendCommand("AVR VOLUME " + val); // 0-180
+            }
+
+            // INPUTS: INPUT (Phono|CD|Tuner|CD-R|MD-Tape|DVD|DTV|SAT|VCR-1|VCR-2|V-AUX)
         }
 
         public void SendCommand(String command)

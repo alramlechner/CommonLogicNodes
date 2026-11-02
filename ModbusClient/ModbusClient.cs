@@ -101,7 +101,9 @@ namespace alram_lechner_gmx_at.logic.Modbus
         }
         public override void Startup()
         {
-            this.SchedulerService.InvokeIn(new TimeSpan(0, 0, TimeSpan.Value), FetchFromModbusServer);
+            // see: https://knx-user-forum.de/forum/%C3%B6ffentlicher-bereich/knx-eib-forum/1643359-gira-x1-und-modbus-tcp-mit-logikbaustein?p=1844924#post1844924
+            Random rnd = new Random();
+            this.SchedulerService.InvokeIn(new TimeSpan(0, 0, TimeSpan.Value + rnd.Next(20)), FetchFromModbusServer);
         }
 
         public override void Execute()
@@ -144,6 +146,9 @@ namespace alram_lechner_gmx_at.logic.Modbus
                     modbusClient.ConnectionTimeout = 5000;
                     modbusClient.Connect();
                     modbusClient.UnitIdentifier = (byte)ModbusID.Value;
+
+                    // see: https://knx-user-forum.de/forum/%C3%B6ffentlicher-bereich/knx-eib-forum/1643359-gira-x1-und-modbus-tcp-mit-logikbaustein/page7#post1844442
+                    System.Threading.Thread.Sleep(700);
 
                     int[] readHoldingRegisters;
                     switch (FunctionCode.Value)
