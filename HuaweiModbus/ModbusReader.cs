@@ -47,6 +47,9 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
         [Parameter(DisplayOrder = 3, InitOrder = 3, IsDefaultShown = false)]
         public IntValueObject ModbusPort { get; private set; }
 
+        [Parameter(DisplayOrder = 4, InitOrder = 4, IsDefaultShown = false)]
+        public IntValueObject ModbusDeviceId { get; private set; }
+
         [Input(DisplayOrder = 1, IsInput = true, IsRequired = false)]
         public DoubleValueObject chargePowerMax { get; private set; }
 
@@ -132,6 +135,9 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             this.TimeSpan = typeService.CreateInt(PortTypes.Integer, "Abfrageinterval", 60);
             this.ModbusHost = typeService.CreateString(PortTypes.String, "Modbus TCP Host");
             this.ModbusPort = typeService.CreateInt(PortTypes.Integer, "Port", 502);
+            this.ModbusDeviceId = typeService.CreateInt(PortTypes.Integer, "Modbus id", 1);
+            this.ModbusDeviceId.MinValue = 0;
+            this.ModbusDeviceId.MaxValue = 255;
 
             this.chargePowerMax = typeService.CreateDouble(PortTypes.Number, "Max. battery charge power (W)");
             this.dischargePowerMax = typeService.CreateDouble(PortTypes.Number, "Max. battery discharge power (W)");
@@ -195,10 +201,18 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
                 modbusClient = new ModbusClient(ModbusHost.Value, ModbusPort.Value);
                 modbusClient.ConnectionTimeout = 5000;
                 modbusClient.Connect();
-                modbusClient.UnitIdentifier = 1;
+                if (this.ModbusDeviceId.HasValue)
+                {
+                    modbusClient.UnitIdentifier = (byte) this.ModbusDeviceId.Value;
+                }
+                else
+                {
+                    modbusClient.UnitIdentifier = 1;
+                }
+                System.Threading.Thread.Sleep(1000);
 
                 // needed?
-                System.Threading.Thread.Sleep(700);
+                // System.Threading.Thread.Sleep(700);
                 switch (dataType)
                 {
                     case DataTypeEnum.INT32:
@@ -250,22 +264,22 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
             }
 
             int[] readHoldingRegisters;
-            int retry = 5;
+            // int retry = 5;
 
-            while(true)
-                try
-                {
+            // while(true)
+            //    try
+            //    {
                     readHoldingRegisters = modbusClient.ReadHoldingRegisters(startRegister, registerToRead);
-                    break;
-                } catch (System.IO.IOException e)
-                {
-                    retry--;
-                    if (retry == 0)
-                    {
-                        return -1;
-                    }
-                    System.Threading.Thread.Sleep(500);
-                }
+             //       break;
+             //   } catch (System.IO.IOException e)
+             //   {
+             //       retry--;
+             //       if (retry == 0)
+             //       {
+             //           return -1;
+             //       }
+             //       System.Threading.Thread.Sleep(500);
+             //   }
 
             double result = 0;
             string result_str = "";
@@ -326,10 +340,17 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
                     modbusClient = new ModbusClient(ModbusHost.Value, ModbusPort.Value);
                     modbusClient.ConnectionTimeout = 5000;
                     modbusClient.Connect();
-                    modbusClient.UnitIdentifier = 1;
+                    if (this.ModbusDeviceId.HasValue)
+                    {
+                        modbusClient.UnitIdentifier = (byte)this.ModbusDeviceId.Value;
+                    }
+                    else
+                    {
+                        modbusClient.UnitIdentifier = 1;
+                    }
 
                     // see: https://knx-user-forum.de/forum/%C3%B6ffentlicher-bereich/knx-eib-forum/1643359-gira-x1-und-modbus-tcp-mit-logikbaustein/page7#post1844442
-                    System.Threading.Thread.Sleep(700);
+                    System.Threading.Thread.Sleep(1000);
 
                     this.mppt1Voltage.Value = readRegister(modbusClient, 32016, DataTypeEnum.INT16_SIGNED) / 10.0;
                     this.mppt1Current.Value = readRegister(modbusClient, 32017, DataTypeEnum.INT16_SIGNED) / 100.0;
@@ -359,6 +380,7 @@ namespace alram_lechner_gmx_at.logic.HuaweiModbus
                 catch (Exception e)
                 {
                     this.ErrorMessage.Value = e.ToString();
+                    Console.WriteLine(e.ToString());
                     this.SchedulerService.InvokeIn(new TimeSpan(0, 1, 0), FetchFromModbusServer);
                 }
                 finally
