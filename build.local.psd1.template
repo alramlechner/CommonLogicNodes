@@ -1,0 +1,7 @@
+# Template for build.local.psd1 (copy it to build.local.psd1, which is gitignored).
+@{
+    # Path to the .p12 certificate used by `./build.ps1 -Sign` (keep it outside the repo)
+    CertPath     = 'C:\path\to\certificate.p12'
+    # Certificate password; empty string if none
+    CertPassword = ''
+}

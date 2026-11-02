@@ -18,3 +18,10 @@
 /InfluxDbNode/obj
 /AVRControl/bin/Debug
 /AVRControl/obj/Debug
+
+# build output
+**/bin/
+**/obj/
+
+# local build configuration (certificate path)
+build.local.psd1
